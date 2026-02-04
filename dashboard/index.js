@@ -554,7 +554,15 @@ module.exports = (client) => {
             // But channel.permissionsFor works if in guild.
             if (channel.guild) {
                 const permissions = channel.permissionsFor(client.user);
-                if (!permissions.has('SEND_MESSAGES')) return res.status(403).json({ error: 'Missing SEND_MESSAGES permission' });
+
+                // If checking Target, ensure we can SEND
+                const { type } = req.body;
+                if (type === 'target') {
+                    if (!permissions.has('SEND_MESSAGES')) return res.status(403).json({ error: 'Missing SEND_MESSAGES permission' });
+                } else {
+                    // Source: just need to view
+                    if (!permissions.has('VIEW_CHANNEL')) return res.status(403).json({ error: 'Missing VIEW_CHANNEL permission' });
+                }
 
                 if (checkWebhook) {
                     if (!permissions.has('MANAGE_WEBHOOKS')) return res.status(403).json({ error: 'Missing MANAGE_WEBHOOKS permission (Required for Clone)' });

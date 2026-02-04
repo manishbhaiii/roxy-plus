@@ -353,7 +353,7 @@
                         const res = await fetch('/api/validate/mirror-channel', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ id, checkWebhook })
+                            body: JSON.stringify({ id, checkWebhook, type })
                         });
 
                         if (res.ok) {

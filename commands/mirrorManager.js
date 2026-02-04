@@ -4,8 +4,6 @@ const path = require('path');
 
 const CONFIG_PATH = path.join(__dirname, '../data/mirror_config.json');
 
-// Store active mirrors: Map<sourceChannelId, Config>
-// Config: { sourceId, targetId, mode ('normal'|'webhook'), webhook: { id, token } (optional), startTime }
 let activeMirrors = new Map();
 
 function loadData() {
@@ -16,7 +14,6 @@ function loadData() {
     try {
         return JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
     } catch (e) {
-        console.error("Error loading mirror config:", e);
         return {};
     }
 }
@@ -39,36 +36,26 @@ async function initialize(client) {
     console.log("[Mirror System] Initializing...");
     const saved = loadData();
 
-    // Restore mirrors
     for (const [sourceId, config] of Object.entries(saved)) {
         try {
             await startMirror(client, config.sourceId, config.targetId, config.mode, config.webhook, true);
-            // true = restoring, don't save immediately (optimization)
         } catch (e) {
             console.error(`[Mirror] Failed to restore mirror for ${sourceId}:`, e.message);
         }
     }
 
-    // Single Global Listener for Performance? 
-    // Or per mirror?
-    // Using a global listener is better for memory if many mirrors.
     client.on('messageCreate', async (message) => {
         if (!activeMirrors.has(message.channel.id)) return;
         const config = activeMirrors.get(message.channel.id);
 
-        // Loop prevention
         if (message.author.id === client.user.id) return;
-        // Also ignore webhook messages if we are creating them? 
-        // Webhooks have `message.webhookId`.
-        if (message.webhookId) return;
-
-        // Ignore system messages?
+        if (message.author.bot) return;
         if (message.system) return;
 
         try {
             await processMirror(client, message, config);
         } catch (e) {
-            console.error(`[Mirror] Error processing message from ${message.channel.id}:`, e);
+            console.error(`[Mirror] Error processing message from ${message.channel.id}:`, e.message);
         }
     });
 
@@ -86,18 +73,15 @@ async function startMirror(client, sourceId, targetId, mode, webhookData = null,
     if (!sourceChannel) throw new Error("Invalid Source Channel.");
     if (!targetChannel) throw new Error("Invalid Target Channel.");
 
-    // Setup Webhook if needed
     let webhookInfo = webhookData;
     let webhookClient = null;
 
     if (mode === 'webhook') {
         if (!webhookInfo) {
-            // Create/Find Webhook
             const hooks = await targetChannel.fetchWebhooks().catch(() => null);
-            let hook = hooks ? hooks.find(h => h.token) : null; // Find one with token (we need to be able to send)
+            let hook = hooks ? hooks.find(h => h.token) : null;
 
             if (!hook) {
-                // Create
                 try {
                     hook = await targetChannel.createWebhook('Mirror Bot', {
                         avatar: client.user.displayAvatarURL(),
@@ -118,7 +102,7 @@ async function startMirror(client, sourceId, targetId, mode, webhookData = null,
         targetId,
         mode,
         webhook: webhookInfo,
-        webhookClient, // Runtime only
+        webhookClient,
         startTime: new Date().toISOString()
     };
 
@@ -136,41 +120,63 @@ async function stopMirror(sourceId) {
     return true;
 }
 
+// WORKAROUND: Send attachment URLs as text content so they embed
 async function processMirror(client, message, config) {
     const { mode, targetId, webhookClient } = config;
-    const targetChannel = await client.channels.fetch(targetId); // Can cache this?
 
-    // Prepare Payload
-    const files = [];
+    if (!message.content && message.attachments.size === 0 && message.embeds.length === 0) return;
+
+    // Collect attachment URLs
+    const attachmentUrls = [];
     if (message.attachments.size > 0) {
-        message.attachments.forEach(a => files.push(a.url));
+        message.attachments.forEach(attachment => {
+            attachmentUrls.push(attachment.url);
+        });
     }
-    // Extract CDN links from content? (As per example)
+
+    // Extract CDN links from content
     const cdnLinks = (message.content || '').match(/https:\/\/cdn\.discordapp\.com\/[^\s]+/g) || [];
-    cdnLinks.forEach(link => { if (!files.includes(link)) files.push(link); });
+    cdnLinks.forEach(link => {
+        if (!attachmentUrls.includes(link)) {
+            attachmentUrls.push(link);
+        }
+    });
 
-    const embeds = message.embeds || [];
+    const embeds = message.embeds.length > 0 ? message.embeds : [];
 
-    // Payload Object
-    const payload = {
-        content: message.content || undefined, // undefined if empty string?
-        files: files,
+    // Build content: original message + attachment URLs (so they auto-embed)
+    let finalContent = message.content || '';
+    if (attachmentUrls.length > 0) {
+        // Add URLs to content separated by newlines
+        const urlText = attachmentUrls.join('\n');
+        finalContent = finalContent ? `${finalContent}\n${urlText}` : urlText;
+    }
+
+    const webhookPayload = {
+        username: message.author.username,
+        avatarURL: message.author.displayAvatarURL(),
         embeds: embeds
     };
 
-    // Safety: don't send empty
-    if (!payload.content && !payload.files.length && !payload.embeds.length) return;
+    if (finalContent.trim()) {
+        webhookPayload.content = finalContent;
+    }
 
     if (mode === 'webhook' && webhookClient) {
-        // Clone User Identity
-        payload.username = message.author.username;
-        payload.avatarURL = message.author.displayAvatarURL({ dynamic: true });
-
-        await webhookClient.send(payload);
+        try {
+            await webhookClient.send(webhookPayload);
+        } catch (e) {
+            console.error(`[Mirror] Webhook Error:`, e.message);
+        }
     } else {
-        // Normal Mode (Send as SelfBot)
-        // Just content
-        await targetChannel.send(payload);
+        const targetChannel = await client.channels.fetch(targetId).catch(() => null);
+        if (targetChannel) {
+            try {
+                await targetChannel.send(webhookPayload);
+            } catch (e) {
+                console.error(`[Mirror] Send Error:`, e.message);
+            }
+        }
     }
 }
 
