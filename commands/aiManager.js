@@ -218,15 +218,18 @@ function initialize(client) {
                 // Server Logic
 
                 // Check Free Will
+                let isFreeWill = false;
                 if (config.freeWillChannels) {
                     const fwItem = config.freeWillChannels.find(x => typeof x === 'object' ? x.id === channelId : x === channelId);
                     if (fwItem) {
                         shouldReply = true;
+                        isFreeWill = true;
                         freeWillDelay = typeof fwItem === 'object' ? (fwItem.delay || 0) : 0;
                     }
                 }
+                
                 // Check Mention/Reply triggers
-                else {
+                if (!isFreeWill) {
                     const isMentioned = message.mentions.users.has(client.user.id);
                     // Reply logic could be added here if needed
 
