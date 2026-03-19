@@ -23,7 +23,9 @@ const defaultData = {
     startTimestamp: 0,
     endTimestamp: 0,
     spoofEnabled: false,
-    spoofType: 'none'
+    spoofType: 'none',
+    gameSpoofing: false,
+    selectedGame: 'none'
 };
 
 function loadData() {
@@ -39,6 +41,15 @@ function saveData(data) {
 
     const startOffset = parseInt(data.startTimestamp);
     const endOffset = parseInt(data.endTimestamp);
+
+    if (data.gameSpoofing) {
+        const oldData = fs.existsSync(RPC_FILE) ? JSON.parse(fs.readFileSync(RPC_FILE, 'utf8')) : {};
+        if (!oldData.gameSpoofing || oldData.selectedGame !== data.selectedGame || !oldData.epochGameTimestamp) {
+            data.epochGameTimestamp = Date.now();
+        } else {
+            data.epochGameTimestamp = oldData.epochGameTimestamp;
+        }
+    }
 
     if (data.enableProgressBar && !isNaN(endOffset) && endOffset > 0) {
         const realStart = Date.now() - (isNaN(startOffset) ? 0 : startOffset);
@@ -114,7 +125,26 @@ async function setPresence(client, data) {
             }
 
             // --- SPOOFING LOGIC ---
-            if (data.spoofEnabled) {
+            if (data.gameSpoofing) {
+                delete rpcActivity.details;
+                delete rpcActivity.state;
+                rpcActivity.assets = {};
+                delete rpcActivity.buttons;
+                delete rpcActivity.metadata;
+
+                rpcActivity.type = 'PLAYING';
+                rpcActivity.timestamps = { start: data.epochGameTimestamp || Date.now() };
+
+                if (data.selectedGame === 'minecraft') {
+                    rpcActivity.application_id = '1402418491272986635';
+                    rpcActivity.name = 'Minecraft';
+                    rpcActivity.assets.large_image = 'https://cdn.discordapp.com/app-icons/1402418491272986635/166fbad351ecdd02d11a3b464748f66b.png?size=240&keep_aspect_ratio=false';
+                } else if (data.selectedGame === 'genshin') {
+                    rpcActivity.application_id = '762434991303950386';
+                    rpcActivity.name = 'Genshin Impact';
+                    rpcActivity.assets.large_image = 'https://cdn.discordapp.com/app-icons/762434991303950386/eb0e25b739e4fa38c1671a3d1edcd1e0.png?size=240&keep_aspect_ratio=false';
+                }
+            } else if (data.spoofEnabled) {
                 if (data.spoofType === 'crunchyroll') {
                     rpcActivity.application_id = '981509069309354054';
                 } else if (data.spoofType === 'playstation') {

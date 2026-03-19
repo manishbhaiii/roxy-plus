@@ -117,6 +117,28 @@
             animation: neonPulse 2s infinite alternate;
         }
 
+        @keyframes neonPulseRed {
+            0% {
+                box-shadow: 0 0 5px rgba(255, 60, 60, 0.5), inset 0 0 5px rgba(255, 60, 60, 0.2);
+                border-color: rgba(255, 60, 60, 0.5);
+            }
+
+            50% {
+                box-shadow: 0 0 20px rgba(255, 60, 60, 1), inset 0 0 10px rgba(255, 60, 60, 0.5);
+                border-color: rgba(255, 100, 100, 1);
+            }
+
+            100% {
+                box-shadow: 0 0 5px rgba(255, 60, 60, 0.5), inset 0 0 5px rgba(255, 60, 60, 0.2);
+                border-color: rgba(255, 60, 60, 0.5);
+            }
+        }
+
+        .neon-card-red {
+            border: 2px solid #ff3c3c !important;
+            animation: neonPulseRed 2s infinite alternate;
+        }
+
         .section-title {
             font-size: 1.2rem;
             margin-bottom: 20px;
@@ -407,6 +429,34 @@
                     </div>
                 </div>
 
+                <div class="section-card neon-card-red" id="gameSpoofingSection">
+                    <div class="section-title" style="color: #ff6b81; border-color: rgba(255,107,129,0.2);">Game Spoofing</div>
+                    <div class="status-row" style="margin-bottom: 5px;">
+                        <span style="font-size: 1rem; color:#ccc;">Enable Game Spoofing</span>
+                        <label class="switch">
+                            <input type="checkbox" id="gameSpoofing" onchange="toggleGameSpoofing(true)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <p style="color: #666; font-size: 0.85rem; margin-bottom: 15px; margin-top:0;">Enabling this will override ALL other RPC settings above and natively display a pre-built custom game.</p>
+
+                    <div id="gameSpoofOptionContainer" style="opacity: 0.5; pointer-events: none; transition: 0.3s;">
+                        <input type="hidden" id="selectedGame" value="none">
+                        <div class="platform-grid">
+                            <div class="platform-btn" id="btnMinecraft" onclick="selectGame('minecraft', true)">
+                                <img src="https://cdn.discordapp.com/app-icons/1402418491272986635/166fbad351ecdd02d11a3b464748f66b.png?size=240&keep_aspect_ratio=false"
+                                    alt="MC" style="border-radius: 4px;">
+                                Minecraft
+                            </div>
+                            <div class="platform-btn" id="btnGenshin" onclick="selectGame('genshin', true)">
+                                <img src="https://cdn.discordapp.com/app-icons/762434991303950386/eb0e25b739e4fa38c1671a3d1edcd1e0.png?size=240&keep_aspect_ratio=false"
+                                    alt="GI" style="border-radius: 4px;">
+                                Genshin Impact
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="section-card">
                     <div class="section-title">Images (Assets)</div>
                     <div class="form-grid">
@@ -479,7 +529,13 @@
                     const spoofEnabled = data.spoofEnabled || false;
                     document.getElementById('spoofEnabled').checked = spoofEnabled;
                     document.getElementById('spoofType').value = data.spoofType || 'none';
+                    
+                    const gameSpoofing = data.gameSpoofing || false;
+                    document.getElementById('gameSpoofing').checked = gameSpoofing;
+                    document.getElementById('selectedGame').value = data.selectedGame || 'none';
+                    
                     toggleSpoofing(); // Initialize spoof UI
+                    toggleGameSpoofing(); // Initialize game spoof UI
 
                     const enableProgressBar = data.enableProgressBar || false;
                     document.getElementById('enableProgressBar').checked = enableProgressBar;
@@ -559,6 +615,9 @@
 
                     spoofEnabled: document.getElementById('spoofEnabled').checked,
                     spoofType: document.getElementById('spoofType').value,
+
+                    gameSpoofing: document.getElementById('gameSpoofing').checked,
+                    selectedGame: document.getElementById('selectedGame').value,
 
                     enableProgressBar: document.getElementById('enableProgressBar').checked,
                     startTimestamp: calculateMs('timeVal', 'timeUnit'),
@@ -669,6 +728,63 @@
                 } else if (type === 'playstation') {
                     document.getElementById('btnPlaystation').classList.add('active');
                 }
+            }
+
+            function toggleGameSpoofing(autoSave = false) {
+                const isEnabled = document.getElementById('gameSpoofing').checked;
+                const container = document.getElementById('gameSpoofOptionContainer');
+                
+                // Fields to disable
+                const fields = ['type', 'name', 'applicationId', 'details', 'state', 'largeImage', 'largeText', 'smallImage', 'smallText', 'button1Text', 'button1Url', 'button2Text', 'button2Url'];
+                
+                if (isEnabled) {
+                    container.style.opacity = '1';
+                    container.style.pointerEvents = 'auto';
+                    
+                    if (document.getElementById('selectedGame').value === 'none') {
+                        selectGame('minecraft'); // this won't auto-save due to missing second param
+                    } else {
+                        selectGame(document.getElementById('selectedGame').value);
+                    }
+                    
+                    fields.forEach(f => {
+                        const el = document.getElementById(f);
+                        if (el) {
+                            el.disabled = true;
+                            el.style.opacity = '0.3';
+                        }
+                    });
+                    
+                    document.getElementById('spoofEnabled').checked = false;
+                    document.getElementById('spoofEnabled').disabled = true;
+                    toggleSpoofing(); // refresh normal spoofing
+                } else {
+                    container.style.opacity = '0.5';
+                    container.style.pointerEvents = 'none';
+                    
+                    fields.forEach(f => {
+                        const el = document.getElementById(f);
+                        if (el) {
+                            el.disabled = false;
+                            el.style.opacity = '1';
+                        }
+                    });
+
+                    document.getElementById('spoofEnabled').disabled = false;
+                }
+                
+                if (autoSave) saveRpc(null, true);
+            }
+            
+            function selectGame(game, autoSave = false) {
+                document.getElementById('selectedGame').value = game;
+                document.getElementById('btnMinecraft').classList.remove('active');
+                document.getElementById('btnGenshin').classList.remove('active');
+                
+                if (game === 'minecraft') document.getElementById('btnMinecraft').classList.add('active');
+                if (game === 'genshin') document.getElementById('btnGenshin').classList.add('active');
+                
+                if (autoSave) saveRpc(null, true);
             }
         </script>
 </body>
