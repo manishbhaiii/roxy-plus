@@ -48,8 +48,8 @@ module.exports = {
         loadData();
 
         client.on('messageCreate', async (message) => {
-            if (message.author.bot || !message.guild) return; // Ignore bots/DMs usually
-            if (message.author.id === client.user.id) return; // Ignore self
+            if ((message.author.bot && message.author.id !== client.user.id) || !message.guild) return; // Ignore other bots/DMs usually
+            // Prevent ignoring self to allow selfbot to react to own messages
 
             // Check if enabled
             // Note: If global is TRUE, it works everywhere unless restricted?
