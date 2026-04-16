@@ -1,4 +1,11 @@
 require('dotenv').config();
+
+// Suppress annoying DeprecationWarnings from dependencies (like url.parse())
+process.on('warning', (warning) => {
+    if (warning.name === 'DeprecationWarning') return;
+    console.warn(warning.name, warning.message);
+});
+
 require('./logger').initLogger();
 const { Client } = require('discord.js-selfbot-v13');
 const fs = require('fs');

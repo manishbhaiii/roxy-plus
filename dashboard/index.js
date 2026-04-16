@@ -803,6 +803,132 @@ module.exports = (client) => {
         }
     });
 
+    // --- RECORDER Routes ---
+    app.get('/commands/recorder', (req, res) => {
+        res.render('cmd_recorder', { user: client.user, page: 'commands' });
+    });
+
+    app.get('/api/recorder/status', (req, res) => {
+        const recManager = require('../commands/rec');
+        const { getVoiceConnection } = require('@discordjs/voice');
+        let recordingStatus = false;
+        let recordingTime = 0;
+        let activeGuildId = null;
+        let channelId = null;
+        let guildName = '';
+        let channelName = '';
+        let guildIcon = '';
+
+        for (const [gid, session] of recManager.activeSessions.entries()) {
+            activeGuildId = gid;
+            channelId = session.channelId;
+            guildName = session.guildName;
+            channelName = session.channelName;
+            const g = client.guilds.cache.get(gid);
+            guildIcon = g ? g.iconURL({ dynamic: true }) : '';
+            recordingStatus = true;
+            recordingTime = Date.now() - session.recordingStartTime;
+            break;
+        }
+
+        if (!activeGuildId) {
+            // Check if connected to any VC
+            for (const [gId, guild] of client.guilds.cache.entries()) {
+                const member = guild.members.cache.get(client.user.id);
+                if (member && member.voice && member.voice.channelId) {
+                    activeGuildId = gId;
+                    channelId = member.voice.channelId;
+                    guildName = guild.name;
+                    channelName = member.voice.channel.name;
+                    guildIcon = guild.iconURL({ dynamic: true }) || '';
+                    break;
+                }
+            }
+        }
+
+        res.json({
+            isConnectedToVoice: !!activeGuildId,
+            isPlayingRecording: recManager.playbackPlayers.has(activeGuildId),
+            isRecording: recordingStatus,
+            activeGuildId,
+            channelId,
+            guildName,
+            channelName,
+            guildIcon,
+            recordingTime,
+            recordings: recManager.loadMeta()
+        });
+    });
+
+    app.post('/api/recorder/join', async (req, res) => {
+        const recManager = require('../commands/rec');
+        try {
+            await recManager.joinTargetVC(client, req.body.guildId, req.body.channelId);
+            res.json({ success: true });
+        } catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+    });
+
+    app.post('/api/recorder/leave', (req, res) => {
+        const { getVoiceConnection } = require('@discordjs/voice');
+        const conn = getVoiceConnection(req.body.guildId);
+        if (conn) {
+            try { conn.destroy(); } catch(e) {}
+        }
+        res.json({ success: true });
+    });
+
+    app.post('/api/recorder/start', async (req, res) => {
+        const recManager = require('../commands/rec');
+        try {
+            await recManager.startRecordingDirect(client, req.body.guildId, req.body.channelId, "Dashboard");
+            res.json({ success: true });
+        } catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+    });
+
+    app.post('/api/recorder/stop', async (req, res) => {
+        const recManager = require('../commands/rec');
+        try {
+            await recManager.stopRecordingDirect(client, req.body.guildId);
+            res.json({ success: true });
+        } catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+    });
+
+    app.post('/api/recorder/play', async (req, res) => {
+        const recManager = require('../commands/rec');
+        try {
+            await recManager.playRecordingDirect(client, req.body.guildId, req.body.filename);
+            res.json({ success: true });
+        } catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+    });
+
+    app.post('/api/recorder/stopplay', (req, res) => {
+        const recManager = require('../commands/rec');
+        try {
+            recManager.stopPlaybackDirect(req.body.guildId);
+            res.json({ success: true });
+        } catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+    });
+
+    app.post('/api/recorder/delete', (req, res) => {
+        const recManager = require('../commands/rec');
+        try {
+            recManager.deleteRecordingDirect(req.body.filename);
+            res.json({ success: true });
+        } catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+    });
+
     app.get('/commands/:category', (req, res) => {
         const category = req.params.category;
         res.render('commands_sub', {
