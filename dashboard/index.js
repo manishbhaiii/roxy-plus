@@ -39,7 +39,27 @@ module.exports = (client) => {
 
     const sessionKeyPath = path.join(__dirname, '..', 'data', 'dashboard_key.json');
 
-    // Auto-Logout System (Hourly Check)
+
+    if (fs.existsSync(sessionKeyPath)) {
+        try {
+            const sessionData = JSON.parse(fs.readFileSync(sessionKeyPath, 'utf8'));
+            if (sessionData && sessionData.key) {
+                // Background start-up check
+                verifyKey(sessionData.key).then(isValid => {
+                    if (!isValid) {
+                        console.log('[Auth System] Startup Check: Key expired or invalid. Logging out user.');
+                        try { fs.unlinkSync(sessionKeyPath); } catch (e) { }
+                    } else {
+                        console.log('[Auth System] Startup Check: Access key validated successfully.');
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('[Auth System] Error checking key at startup:', error);
+        }
+    }
+
+
     setInterval(async () => {
         if (fs.existsSync(sessionKeyPath)) {
             try {
@@ -47,7 +67,7 @@ module.exports = (client) => {
                 if (sessionData && sessionData.key) {
                     const isValid = await verifyKey(sessionData.key);
                     if (!isValid) {
-                        console.log('[Auth System] Key expired or invalid. Logging out user.');
+                        console.log('[Auth System] Hourly Check: Key expired or invalid. Logging out user.');
                         try { fs.unlinkSync(sessionKeyPath); } catch (e) { }
                     }
                 }
@@ -55,7 +75,7 @@ module.exports = (client) => {
                 console.error('[Auth System] Error checking key:', error);
             }
         }
-    }, 60 * 60 * 1000); // Check every 1 hour
+    }, 60 * 60 * 1000);
 
     // Login Page
     app.get('/login', (req, res) => {
@@ -786,7 +806,7 @@ module.exports = (client) => {
             } else if (action === 'saveConfig') {
                 const data = welcomerManager.loadData();
                 data.config = { textcolor, welcomeType, textMessage, cardMessage };
-                
+
                 // Update all existing setups automatically
                 if (!data.welcomeSetups) data.welcomeSetups = {};
                 for (let gid of Object.keys(data.welcomeSetups)) {
@@ -874,7 +894,7 @@ module.exports = (client) => {
         const { getVoiceConnection } = require('@discordjs/voice');
         const conn = getVoiceConnection(req.body.guildId);
         if (conn) {
-            try { conn.destroy(); } catch(e) {}
+            try { conn.destroy(); } catch (e) { }
         }
         res.json({ success: true });
     });
