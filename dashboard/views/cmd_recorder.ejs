@@ -212,14 +212,33 @@
             background: #3f3f50;
         }
 
-        .rec-btn.purple { background: #8a2be2; }
-        .rec-btn.purple:hover { background: #7122b9; box-shadow: 0 0 10px rgba(138,43,226,0.3); }
+        .rec-btn.purple {
+            background: #8a2be2;
+        }
 
-        .rec-btn.light-purple { background: #a29bfe; color: #111; }
-        .rec-btn.light-purple:hover { background: #8e86eb; }
+        .rec-btn.purple:hover {
+            background: #7122b9;
+            box-shadow: 0 0 10px rgba(138, 43, 226, 0.3);
+        }
 
-        .rec-btn.red { background: rgba(255, 71, 87, 0.2); color: #ff4757; }
-        .rec-btn.red:hover { background: rgba(255, 71, 87, 0.3); color: #ff6b81; }
+        .rec-btn.light-purple {
+            background: #a29bfe;
+            color: #111;
+        }
+
+        .rec-btn.light-purple:hover {
+            background: #8e86eb;
+        }
+
+        .rec-btn.red {
+            background: rgba(255, 71, 87, 0.2);
+            color: #ff4757;
+        }
+
+        .rec-btn.red:hover {
+            background: rgba(255, 71, 87, 0.3);
+            color: #ff6b81;
+        }
 
         .recording-status {
             width: 140px;
@@ -230,7 +249,7 @@
             align-items: center;
             justify-content: center;
             margin-bottom: 20px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
             transition: all 0.3s;
             position: relative;
         }
@@ -242,9 +261,17 @@
         }
 
         @keyframes pulse-purple {
-            0% { box-shadow: 0 0 0 0 rgba(138, 43, 226, 0.4); }
-            70% { box-shadow: 0 0 0 20px rgba(138, 43, 226, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(138, 43, 226, 0); }
+            0% {
+                box-shadow: 0 0 0 0 rgba(138, 43, 226, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 20px rgba(138, 43, 226, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(138, 43, 226, 0);
+            }
         }
 
         .rec-timer {
@@ -270,19 +297,21 @@
         }
 
         @media(max-width: 900px) {
-            .rec-grid { grid-template-columns: 1fr; }
+            .rec-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 
 <body>
     <div class="rec-container">
-        
+
         <div class="rec-grid">
             <div id="leftColumn">
                 <!-- JOIN UI -->
                 <div id="joinUI" class="card">
-                    <div class="join-title">🎙️ Audio Engine</div>
+                    <div class="join-title">Voice Recorder</div>
                     <div class="join-desc">Select a server and voice channel to connect.</div>
                     <div class="join-container">
                         <select id="serverSelect" class="select-box" onchange="loadChannels()">
@@ -300,26 +329,40 @@
                     <div class="guild-badge">
                         <img id="guildIcon" src="" class="guild-icon">
                         <div style="font-size: 0.9rem; color: #ccc;">
-                            <span id="guildName">Guild</span> • <span id="channelName" class="channel-name">#Channel</span>
+                            <span id="guildName">Guild</span> • <span id="channelName"
+                                class="channel-name">#Channel</span>
                         </div>
                     </div>
 
                     <div id="recStatusBox" class="recording-status">
                         <!-- Custom Purple SVG Mic -->
                         <svg viewBox="0 0 24 24" style="width:50px; height:50px; fill:#fff;">
-                            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
-                            <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+                            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z" />
+                            <path
+                                d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" />
                         </svg>
                         <div class="watermark">Roxy+</div>
                     </div>
 
                     <div id="recTimer" class="rec-timer" style="display: none;">00:00</div>
-                    <div id="recTitle" style="font-size: 1.2rem; margin-bottom: 20px; color: #aaa;">Ready to record</div>
+                    <div id="recTitle" style="font-size: 1.2rem; margin-bottom: 20px; color: #aaa;">Ready to record
+                    </div>
 
                     <div style="display: flex; gap: 15px; justify-content: center; width: 100%;">
-                        <button id="btnStart" class="btn-join" onclick="startRec()" style="width: 180px;"><svg style="width:16px;height:16px;vertical-align:middle;margin-right:5px;fill:#fff;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/></svg> Start Rec</button>
-                        <button id="btnStop" class="btn-join" onclick="stopRec()" style="width: 180px; display: none; background: linear-gradient(135deg, #333, #555);"><svg style="width:16px;height:16px;vertical-align:middle;margin-right:5px;fill:#fff;" viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></svg> Stop Rec</button>
-                        <button id="btnStopPlay" class="btn-join" onclick="stopPlay()" style="width: 180px; display: none; background: linear-gradient(135deg, #333, #555);">Stop Playing</button>
+                        <button id="btnStart" class="btn-join" onclick="startRec()" style="width: 180px;"><svg
+                                style="width:16px;height:16px;vertical-align:middle;margin-right:5px;fill:#fff;"
+                                viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="8" />
+                            </svg> Start Rec</button>
+                        <button id="btnStop" class="btn-join" onclick="stopRec()"
+                            style="width: 180px; display: none; background: linear-gradient(135deg, #333, #555);"><svg
+                                style="width:16px;height:16px;vertical-align:middle;margin-right:5px;fill:#fff;"
+                                viewBox="0 0 24 24">
+                                <path d="M6 6h12v12H6z" />
+                            </svg> Stop Rec</button>
+                        <button id="btnStopPlay" class="btn-join" onclick="stopPlay()"
+                            style="width: 180px; display: none; background: linear-gradient(135deg, #333, #555);">Stop
+                            Playing</button>
                     </div>
 
                     <button class="btn-action btn-leave" onclick="leaveChannel()">Disconnect</button>
@@ -339,152 +382,152 @@
 
     <%- include('partials/super_button') %>
 
-    <script>
-        let currentGuildId = null;
-        let recordingInterval = null;
-        let recordingTimeMs = 0;
+        <script>
+            let currentGuildId = null;
+            let recordingInterval = null;
+            let recordingTimeMs = 0;
 
-        function formatTime(ms) {
-            const totalSeconds = Math.floor(ms / 1000);
-            const m = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
-            const s = (totalSeconds % 60).toString().padStart(2, '0');
-            return `${m}:${s}`;
-        }
+            function formatTime(ms) {
+                const totalSeconds = Math.floor(ms / 1000);
+                const m = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+                const s = (totalSeconds % 60).toString().padStart(2, '0');
+                return `${m}:${s}`;
+            }
 
-        async function updateState() {
-            try {
-                const res = await fetch('/api/recorder/status');
-                const data = await res.json();
+            async function updateState() {
+                try {
+                    const res = await fetch('/api/recorder/status');
+                    const data = await res.json();
 
-                const joinUI = document.getElementById('joinUI');
-                const mainUI = document.getElementById('mainUI');
+                    const joinUI = document.getElementById('joinUI');
+                    const mainUI = document.getElementById('mainUI');
 
-                if (data.isConnectedToVoice || data.isRecording || data.isPlayingRecording) {
-                    joinUI.style.display = 'none';
-                    mainUI.style.display = 'flex'; // fixed from grid to flex
+                    if (data.isConnectedToVoice || data.isRecording || data.isPlayingRecording) {
+                        joinUI.style.display = 'none';
+                        mainUI.style.display = 'flex'; // fixed from grid to flex
 
-                    currentGuildId = data.activeGuildId;
-                    document.getElementById('guildName').innerText = data.guildName;
-                    document.getElementById('channelName').innerText = data.channelName;
-                    document.getElementById('guildIcon').src = data.guildIcon || 'https://cdn.discordapp.com/embed/avatars/0.png';
+                        currentGuildId = data.activeGuildId;
+                        document.getElementById('guildName').innerText = data.guildName;
+                        document.getElementById('channelName').innerText = data.channelName;
+                        document.getElementById('guildIcon').src = data.guildIcon || 'https://cdn.discordapp.com/embed/avatars/0.png';
 
-                    const box = document.getElementById('recStatusBox');
-                    const timer = document.getElementById('recTimer');
-                    const title = document.getElementById('recTitle');
-                    const btnStart = document.getElementById('btnStart');
-                    const btnStop = document.getElementById('btnStop');
-                    const btnStopPlay = document.getElementById('btnStopPlay');
+                        const box = document.getElementById('recStatusBox');
+                        const timer = document.getElementById('recTimer');
+                        const title = document.getElementById('recTitle');
+                        const btnStart = document.getElementById('btnStart');
+                        const btnStop = document.getElementById('btnStop');
+                        const btnStopPlay = document.getElementById('btnStopPlay');
 
-                    if (data.isRecording) {
-                        box.classList.add('active');
-                        timer.style.display = 'block';
-                        btnStart.style.display = 'none';
-                        btnStopPlay.style.display = 'none';
-                        btnStop.style.display = 'block';
-                        title.innerText = 'Recording in progress...';
-                        title.style.color = '#ff4757';
+                        if (data.isRecording) {
+                            box.classList.add('active');
+                            timer.style.display = 'block';
+                            btnStart.style.display = 'none';
+                            btnStopPlay.style.display = 'none';
+                            btnStop.style.display = 'block';
+                            title.innerText = 'Recording in progress...';
+                            title.style.color = '#ff4757';
 
-                        recordingTimeMs = data.recordingTime;
-                        timer.innerText = formatTime(recordingTimeMs);
-                        if (!recordingInterval) {
-                            recordingInterval = setInterval(() => {
-                                recordingTimeMs += 1000;
-                                timer.innerText = formatTime(recordingTimeMs);
-                            }, 1000);
+                            recordingTimeMs = data.recordingTime;
+                            timer.innerText = formatTime(recordingTimeMs);
+                            if (!recordingInterval) {
+                                recordingInterval = setInterval(() => {
+                                    recordingTimeMs += 1000;
+                                    timer.innerText = formatTime(recordingTimeMs);
+                                }, 1000);
+                            }
+                        } else if (data.isPlayingRecording) {
+                            // Playing state
+                            box.classList.remove('active');
+                            box.style.background = '#e67e22'; // Orange
+                            timer.style.display = 'none';
+                            btnStart.style.display = 'none';
+                            btnStop.style.display = 'none';
+                            btnStopPlay.style.display = 'block';
+                            title.innerText = 'Playing record to Voice...';
+                            title.style.color = '#e67e22';
+                            clearInterval(recordingInterval);
+                            recordingInterval = null;
+                        } else {
+                            box.classList.remove('active');
+                            box.style.background = '#1a1a20';
+                            timer.style.display = 'none';
+                            btnStart.style.display = 'block';
+                            btnStop.style.display = 'none';
+                            btnStopPlay.style.display = 'none';
+                            title.innerText = 'Ready to record';
+                            title.style.color = '#aaa';
+                            clearInterval(recordingInterval);
+                            recordingInterval = null;
                         }
-                    } else if (data.isPlayingRecording) {
-                        // Playing state
-                        box.classList.remove('active');
-                        box.style.background = '#e67e22'; // Orange
-                        timer.style.display = 'none';
-                        btnStart.style.display = 'none';
-                        btnStop.style.display = 'none';
-                        btnStopPlay.style.display = 'block';
-                        title.innerText = 'Playing record to Voice...';
-                        title.style.color = '#e67e22';
-                        clearInterval(recordingInterval);
-                        recordingInterval = null;
+
+                        // Render List always
+                        renderMeta(data.recordings);
+
                     } else {
-                        box.classList.remove('active');
-                        box.style.background = '#1a1a20';
-                        timer.style.display = 'none';
-                        btnStart.style.display = 'block';
-                        btnStop.style.display = 'none';
-                        btnStopPlay.style.display = 'none';
-                        title.innerText = 'Ready to record';
-                        title.style.color = '#aaa';
+                        mainUI.style.display = 'none';
+                        joinUI.style.display = 'flex';
                         clearInterval(recordingInterval);
                         recordingInterval = null;
+                        currentGuildId = null;
+                        if (document.getElementById('serverSelect').children.length <= 1) loadServers();
+                        renderMeta(data.recordings);
                     }
+                } catch (e) { }
+            }
 
-                    // Render List always
-                    renderMeta(data.recordings);
+            const audioPlayers = {};
+            function toggleLocalPlay(filename) {
+                if (!audioPlayers[filename]) {
+                    audioPlayers[filename] = new Audio(`/recordings/${filename}`);
+                    audioPlayers[filename].onended = () => {
+                        const btn = document.getElementById(`btnLocalPlay_${filename}`);
+                        if (btn) btn.innerHTML = '<svg style="width:14px;height:14px;vertical-align:middle;margin-right:2px;fill:currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Play';
+                    };
+                }
+                const audio = audioPlayers[filename];
+                const btn = document.getElementById(`btnLocalPlay_${filename}`);
+                if (audio.paused) {
+                    // Pause all others
+                    Object.keys(audioPlayers).forEach(k => {
+                        if (k !== filename && !audioPlayers[k].paused) {
+                            audioPlayers[k].pause();
+                            const otherBtn = document.getElementById(`btnLocalPlay_${k}`);
+                            if (otherBtn) otherBtn.innerHTML = '<svg style="width:14px;height:14px;vertical-align:middle;margin-right:2px;fill:currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Play';
+                        }
+                    });
 
+                    audio.play();
+                    btn.innerHTML = '<svg style="width:14px;height:14px;vertical-align:middle;margin-right:2px;fill:currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg> Pause';
                 } else {
-                    mainUI.style.display = 'none';
-                    joinUI.style.display = 'flex';
-                    clearInterval(recordingInterval);
-                    recordingInterval = null;
-                    currentGuildId = null;
-                    if (document.getElementById('serverSelect').children.length <= 1) loadServers();
-                    renderMeta(data.recordings);
+                    audio.pause();
+                    btn.innerHTML = '<svg style="width:14px;height:14px;vertical-align:middle;margin-right:2px;fill:currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Play';
                 }
-            } catch (e) {}
-        }
-
-        const audioPlayers = {};
-        function toggleLocalPlay(filename) {
-            if (!audioPlayers[filename]) {
-                audioPlayers[filename] = new Audio(`/recordings/${filename}`);
-                audioPlayers[filename].onended = () => {
-                    const btn = document.getElementById(`btnLocalPlay_${filename}`);
-                    if (btn) btn.innerHTML = '<svg style="width:14px;height:14px;vertical-align:middle;margin-right:2px;fill:currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Play';
-                };
             }
-            const audio = audioPlayers[filename];
-            const btn = document.getElementById(`btnLocalPlay_${filename}`);
-            if (audio.paused) {
-                // Pause all others
-                Object.keys(audioPlayers).forEach(k => {
-                    if (k !== filename && !audioPlayers[k].paused) {
-                        audioPlayers[k].pause();
-                        const otherBtn = document.getElementById(`btnLocalPlay_${k}`);
-                        if (otherBtn) otherBtn.innerHTML = '<svg style="width:14px;height:14px;vertical-align:middle;margin-right:2px;fill:currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Play';
+
+            function renderMeta(recordings) {
+                const list = document.getElementById('recList');
+                if (!recordings || recordings.length === 0) {
+                    list.innerHTML = '<div style="color: #777; text-align: center; margin-top: 20px;">No recordings yet.</div>';
+                    return;
+                }
+
+                recordings.sort((a, b) => b.number - a.number);
+
+                let html = '';
+                recordings.forEach(rec => {
+                    const date = new Date(rec.startedAt).toLocaleString();
+                    const m = Math.floor(rec.duration / 60);
+                    const s = rec.duration % 60;
+                    const dur = `${m}m ${s}s`;
+                    const size = (rec.fileSize / (1024 * 1024)).toFixed(2) + ' MB';
+
+                    // Check if audio is currently playing to match button state
+                    let playIcon = '<svg style="width:14px;height:14px;vertical-align:middle;margin-right:2px;fill:currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Play';
+                    if (audioPlayers[rec.filename] && !audioPlayers[rec.filename].paused) {
+                        playIcon = '<svg style="width:14px;height:14px;vertical-align:middle;margin-right:2px;fill:currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg> Pause';
                     }
-                });
 
-                audio.play();
-                btn.innerHTML = '<svg style="width:14px;height:14px;vertical-align:middle;margin-right:2px;fill:currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg> Pause';
-            } else {
-                audio.pause();
-                btn.innerHTML = '<svg style="width:14px;height:14px;vertical-align:middle;margin-right:2px;fill:currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Play';
-            }
-        }
-
-        function renderMeta(recordings) {
-            const list = document.getElementById('recList');
-            if (!recordings || recordings.length === 0) {
-                list.innerHTML = '<div style="color: #777; text-align: center; margin-top: 20px;">No recordings yet.</div>';
-                return;
-            }
-
-            recordings.sort((a,b) => b.number - a.number);
-
-            let html = '';
-            recordings.forEach(rec => {
-                const date = new Date(rec.startedAt).toLocaleString();
-                const m = Math.floor(rec.duration / 60);
-                const s = rec.duration % 60;
-                const dur = `${m}m ${s}s`;
-                const size = (rec.fileSize / (1024*1024)).toFixed(2) + ' MB';
-
-                // Check if audio is currently playing to match button state
-                let playIcon = '<svg style="width:14px;height:14px;vertical-align:middle;margin-right:2px;fill:currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Play';
-                if (audioPlayers[rec.filename] && !audioPlayers[rec.filename].paused) {
-                    playIcon = '<svg style="width:14px;height:14px;vertical-align:middle;margin-right:2px;fill:currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg> Pause';
-                }
-
-                html += `
+                    html += `
                 <div class="record-item">
                     <div class="record-title">#${rec.number} - ${rec.channel || 'Channel'}</div>
                     <div class="record-info">
@@ -500,125 +543,126 @@
                         <button class="rec-btn red" onclick="deleteRec('${rec.filename}')">Delete</button>
                     </div>
                 </div>`;
-            });
-            list.innerHTML = html;
-        }
+                });
+                list.innerHTML = html;
+            }
 
-        async function loadServers() {
-            const res = await fetch('/api/discord/guilds');
-            const guilds = await res.json();
-            const sel = document.getElementById('serverSelect');
-            sel.innerHTML = '<option value="">Select Server</option>';
-            guilds.forEach(g => {
-                sel.innerHTML += `<option value="${g.id}">${g.name}</option>`;
-            });
-        }
+            async function loadServers() {
+                const res = await fetch('/api/discord/guilds');
+                const guilds = await res.json();
+                const sel = document.getElementById('serverSelect');
+                sel.innerHTML = '<option value="">Select Server</option>';
+                guilds.forEach(g => {
+                    sel.innerHTML += `<option value="${g.id}">${g.name}</option>`;
+                });
+            }
 
-        async function loadChannels() {
-            const guildId = document.getElementById('serverSelect').value;
-            const sel = document.getElementById('channelSelect');
-            if (!guildId) { sel.innerHTML = '<option value="">Select Voice Channel</option>'; return; }
+            async function loadChannels() {
+                const guildId = document.getElementById('serverSelect').value;
+                const sel = document.getElementById('channelSelect');
+                if (!guildId) { sel.innerHTML = '<option value="">Select Voice Channel</option>'; return; }
 
-            sel.innerHTML = '<option>Loading...</option>';
-            const res = await fetch(`/api/discord/channels/${guildId}`);
-            const channels = await res.json();
-            sel.innerHTML = '<option value="">Select Voice Channel</option>';
-            channels.forEach(c => {
-                sel.innerHTML += `<option value="${c.id}">${c.name}</option>`;
-            });
-        }
+                sel.innerHTML = '<option>Loading...</option>';
+                const res = await fetch(`/api/discord/channels/${guildId}`);
+                const channels = await res.json();
+                sel.innerHTML = '<option value="">Select Voice Channel</option>';
+                channels.forEach(c => {
+                    sel.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+                });
+            }
 
-        async function joinChannel() {
-            const guildId = document.getElementById('serverSelect').value;
-            const channelId = document.getElementById('channelSelect').value;
-            if (!guildId || !channelId) return alert('Select server and channel');
-            
-            const btn = document.querySelector('#joinUI .btn-join');
-            btn.innerText = 'Joining...';
-            await fetch('/api/recorder/join', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ guildId, channelId })
-            });
-            setTimeout(() => {
-                btn.innerText = 'Join Voice';
-                updateState();
-            }, 300);
-        }
+            async function joinChannel() {
+                const guildId = document.getElementById('serverSelect').value;
+                const channelId = document.getElementById('channelSelect').value;
+                if (!guildId || !channelId) return alert('Select server and channel');
 
-        async function leaveChannel() {
-            if (!currentGuildId) return;
-            const btn = document.querySelector('.btn-leave');
-            btn.innerText = 'Disconnecting...';
-            await fetch('/api/recorder/leave', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ guildId: currentGuildId })
-            });
-            setTimeout(() => {
-                btn.innerText = 'Disconnect';
-                updateState();
-            }, 300);
-        }
+                const btn = document.querySelector('#joinUI .btn-join');
+                btn.innerText = 'Joining...';
+                await fetch('/api/recorder/join', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ guildId, channelId })
+                });
+                setTimeout(() => {
+                    btn.innerText = 'Join Voice';
+                    updateState();
+                }, 300);
+            }
 
-        async function startRec() {
-            if (!currentGuildId) return;
-            await fetch('/api/recorder/start', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ guildId: currentGuildId })
-            });
-            setTimeout(updateState, 300);
-        }
+            async function leaveChannel() {
+                if (!currentGuildId) return;
+                const btn = document.querySelector('.btn-leave');
+                btn.innerText = 'Disconnecting...';
+                await fetch('/api/recorder/leave', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ guildId: currentGuildId })
+                });
+                setTimeout(() => {
+                    btn.innerText = 'Disconnect';
+                    updateState();
+                }, 300);
+            }
 
-        async function stopRec() {
-            if (!currentGuildId) return;
-            document.getElementById('btnStop').innerText = 'Saving...';
-            document.getElementById('btnStop').disabled = true;
-            await fetch('/api/recorder/stop', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ guildId: currentGuildId })
-            });
-            setTimeout(() => {
-                document.getElementById('btnStop').innerHTML = '<svg style="width:16px;height:16px;vertical-align:middle;margin-right:5px;fill:#fff;" viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></svg> Stop Rec';
-                document.getElementById('btnStop').disabled = false;
-                updateState();
-            }, 300);
-        }
+            async function startRec() {
+                if (!currentGuildId) return;
+                await fetch('/api/recorder/start', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ guildId: currentGuildId })
+                });
+                setTimeout(updateState, 300);
+            }
 
-        async function playInVc(filename) {
-            if (!currentGuildId) return;
-            await fetch('/api/recorder/play', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ guildId: currentGuildId, filename })
-            });
-            setTimeout(updateState, 500);
-        }
+            async function stopRec() {
+                if (!currentGuildId) return;
+                document.getElementById('btnStop').innerText = 'Saving...';
+                document.getElementById('btnStop').disabled = true;
+                await fetch('/api/recorder/stop', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ guildId: currentGuildId })
+                });
+                setTimeout(() => {
+                    document.getElementById('btnStop').innerHTML = '<svg style="width:16px;height:16px;vertical-align:middle;margin-right:5px;fill:#fff;" viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></svg> Stop Rec';
+                    document.getElementById('btnStop').disabled = false;
+                    updateState();
+                }, 300);
+            }
 
-        async function stopPlay() {
-            if (!currentGuildId) return;
-            await fetch('/api/recorder/stopplay', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ guildId: currentGuildId })
-            });
-            setTimeout(updateState, 500);
-        }
+            async function playInVc(filename) {
+                if (!currentGuildId) return;
+                await fetch('/api/recorder/play', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ guildId: currentGuildId, filename })
+                });
+                setTimeout(updateState, 500);
+            }
 
-        async function deleteRec(filename) {
-            if (!confirm('Delete this recording?')) return;
-            await fetch('/api/recorder/delete', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ filename })
-            });
-            setTimeout(updateState, 500);
-        }
+            async function stopPlay() {
+                if (!currentGuildId) return;
+                await fetch('/api/recorder/stopplay', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ guildId: currentGuildId })
+                });
+                setTimeout(updateState, 500);
+            }
 
-        setInterval(updateState, 3000);
-        updateState();
-    </script>
+            async function deleteRec(filename) {
+                if (!confirm('Delete this recording?')) return;
+                await fetch('/api/recorder/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ filename })
+                });
+                setTimeout(updateState, 500);
+            }
+
+            setInterval(updateState, 3000);
+            updateState();
+        </script>
 </body>
+
 </html>
