@@ -1,18 +1,23 @@
 const fs = require('fs');
 const path = require('path');
 
-const ALLOWED_PATH = path.join(__dirname, '../data/allowed.json');
+function getFile(client) {
+    const folder = client && client.dataFolder ? client.dataFolder : 'data';
+    return path.join(__dirname, '..', folder, 'allowed.json');
+}
 
-function loadData() {
+function loadData(client) {
     try {
-        if (!fs.existsSync(ALLOWED_PATH)) {
-            const dir = path.dirname(ALLOWED_PATH);
-            if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+        const file = getFile(client);
+        if (!fs.existsSync(file)) {
+            const folder = client && client.dataFolder ? client.dataFolder : 'data';
+            const dataDir = path.join(__dirname, '..', folder);
+            if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
             const defaultData = { allowedUsers: [] };
-            fs.writeFileSync(ALLOWED_PATH, JSON.stringify(defaultData, null, 4));
+            fs.writeFileSync(file, JSON.stringify(defaultData, null, 4));
             return defaultData;
         }
-        const data = JSON.parse(fs.readFileSync(ALLOWED_PATH, 'utf8'));
+        const data = JSON.parse(fs.readFileSync(file, 'utf8'));
         // Ensure structure
         if (!data.allowedUsers) data.allowedUsers = [];
         return data;
@@ -22,38 +27,39 @@ function loadData() {
     }
 }
 
-function saveData(data) {
+function saveData(client, data) {
     try {
-        const dir = path.dirname(ALLOWED_PATH);
-        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-        fs.writeFileSync(ALLOWED_PATH, JSON.stringify(data, null, 4));
+        const folder = client && client.dataFolder ? client.dataFolder : 'data';
+        const dataDir = path.join(__dirname, '..', folder);
+        if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+        fs.writeFileSync(getFile(client), JSON.stringify(data, null, 4));
     } catch (e) {
         console.error('[Allowed Manager] Error saving data:', e);
     }
 }
 
-function addAllowedUser(userId) {
-    const data = loadData();
+function addAllowedUser(client, userId) {
+    const data = loadData(client);
     if (!data.allowedUsers.includes(userId)) {
         data.allowedUsers.push(userId);
-        saveData(data);
+        saveData(client, data);
         return true;
     }
     return false;
 }
 
-function removeAllowedUser(userId) {
-    const data = loadData();
+function removeAllowedUser(client, userId) {
+    const data = loadData(client);
     if (data.allowedUsers.includes(userId)) {
         data.allowedUsers = data.allowedUsers.filter(id => id !== userId);
-        saveData(data);
+        saveData(client, data);
         return true;
     }
     return false;
 }
 
-function isAllowed(userId) {
-    const data = loadData();
+function isAllowed(client, userId) {
+    const data = loadData(client);
     return data.allowedUsers.includes(userId);
 }
 
