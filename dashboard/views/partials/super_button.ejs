@@ -32,10 +32,21 @@
             <span class="label">Quests</span>
         </a>
 
-        <a href="/server-cloner" class="menu-item <%= page === 'cloner' ? 'active' : '' %>">
+        <a href="/server-cloner" class="menu-item <%= typeof page !== 'undefined' && page === 'cloner' ? 'active' : '' %>">
             <span class="icon">🔄</span>
             <span class="label">Cloner</span>
         </a>
+
+        <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 10px 0;"></div>
+        <div class="menu-header" style="margin-top: 5px;">Accounts</div>
+        <% if (typeof clients !== 'undefined' && clients.length > 0) { %>
+            <% clients.forEach(function(c) { %>
+                <a href="#" class="menu-item <%= typeof activeClientKey !== 'undefined' && activeClientKey === c.tokenKey ? 'active' : '' %>" onclick="switchClient('<%= c.tokenKey %>')">
+                    <span class="icon">👤</span>
+                    <span class="label"><%= c.user ? c.user.username : c.tokenKey %></span>
+                </a>
+            <% }) %>
+        <% } %>
     </div>
 
     <button class="super-btn" id="superBtn" onclick="toggleSuperMenu()"
@@ -55,5 +66,17 @@
         menu.classList.toggle('open');
         btn.classList.toggle('active');
         overlay.classList.toggle('visible');
+    }
+
+    function switchClient(key) {
+        fetch('/api/switch_client', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ key })
+        }).then(res => res.json()).then(data => {
+            if (data.success) {
+                window.location.reload();
+            }
+        });
     }
 </script>
