@@ -1,40 +1,47 @@
 const fs = require('fs');
 const path = require('path');
 
-const dataFile = path.join(__dirname, '../data/welcomer.json');
+function getFile(client) {
+    const folder = client && client.dataFolder ? client.dataFolder : 'data';
+    return path.join(__dirname, '..', folder, 'welcomer.json');
+}
 
-function loadData() {
-    if (!fs.existsSync(dataFile)) {
-        fs.writeFileSync(dataFile, JSON.stringify({ welcomeSetups: {} }));
+function loadData(client) {
+    const file = getFile(client);
+    if (!fs.existsSync(file)) {
+        const folder = client && client.dataFolder ? client.dataFolder : 'data';
+        const dataDir = path.join(__dirname, '..', folder);
+        if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+        fs.writeFileSync(file, JSON.stringify({ welcomeSetups: {} }));
     }
-    const data = JSON.parse(fs.readFileSync(dataFile, 'utf8'));
+    const data = JSON.parse(fs.readFileSync(file, 'utf8'));
     if (!data.welcomeSetups) {
         data.welcomeSetups = {};
-        saveData(data);
+        saveData(client, data);
     }
     return data;
 }
 
-function saveData(data) {
-    fs.writeFileSync(dataFile, JSON.stringify(data, null, 2));
+function saveData(client, data) {
+    fs.writeFileSync(getFile(client), JSON.stringify(data, null, 2));
 }
 
-function addSetup(guildId, channelId, template, background, textcolor, welcomeType = 'card', textMessage, cardMessage) {
-    const data = loadData();
+function addSetup(client, guildId, channelId, template, background, textcolor, welcomeType = 'card', textMessage, cardMessage) {
+    const data = loadData(client);
     data.welcomeSetups[guildId] = { channelId, template, background, textcolor, welcomeType, textMessage, cardMessage };
-    saveData(data);
+    saveData(client, data);
 }
 
-function removeSetup(guildId) {
-    const data = loadData();
+function removeSetup(client, guildId) {
+    const data = loadData(client);
     if (data.welcomeSetups[guildId]) {
         delete data.welcomeSetups[guildId];
-        saveData(data);
+        saveData(client, data);
     }
 }
 
-function getSetup(guildId) {
-    const data = loadData();
+function getSetup(client, guildId) {
+    const data = loadData(client);
     return data.welcomeSetups[guildId];
 }
 
