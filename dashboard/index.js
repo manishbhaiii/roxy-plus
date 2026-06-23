@@ -1383,7 +1383,7 @@ module.exports = (clients) => {
 
         try {
             const { playLogic } = require('../commands/play');
-            const result = await playLogic(client, guildId, query);
+            const result = await playLogic(req.client, guildId, query);
             res.json(result);
         } catch (e) { console.error(e); res.json({ success: false, message: e.message }); }
     });
