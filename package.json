@@ -1,7 +1,7 @@
 {
-  "name": "roxy-plus",
+  "name": "kaizen-dashboard",
   "version": "1.0.0",
-  "description": "Roxy+ Advanced Discord Selfbot",
+  "description": "Kaizen Discord account dashboard",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
@@ -9,33 +9,13 @@
   "keywords": [
     "discord",
     "selfbot",
-    "roxy"
+    "kaizen",
+    "dashboard"
   ],
-  "author": "",
+  "author": "Kaizen",
   "license": "ISC",
   "dependencies": {
-    "@discordjs/core": "^2.4.0",
-    "@discordjs/opus": "^0.10.0",
-    "@discordjs/rest": "^2.6.0",
-    "@discordjs/voice": "^0.19.0",
-    "@discordjs/ws": "^2.0.4",
-    "@snazzah/davey": "^0.1.7",
-    "canvas": "^3.2.1",
-    "cookie-parser": "^1.4.7",
-    "debug": "^4.4.3",
-    "discord-api-types": "^0.38.37",
     "discord.js-selfbot-v13": "^3.7.1",
-    "dotenv": "^17.2.3",
-    "ejs": "^3.1.10",
-    "express": "^5.2.1",
-    "ffmpeg-static": "^5.3.0",
-    "gtts": "^0.2.1",
-    "install": "^0.13.0",
-    "node-cron": "^3.0.3",
-    "npm": "^11.9.0",
-    "openai": "^6.15.0",
-    "opusscript": "^0.0.8",
-    "undici": "^7.16.0",
-    "ws": "^8.18.3"
+    "express": "^5.2.1"
   }
 }

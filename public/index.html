@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kaizen | Account Console</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="bg-glow glow-1"></div>
+    <div class="bg-glow glow-2"></div>
+    <div class="noise"></div>
+
+    <main class="app-shell">
+      <section class="hero panel reveal">
+        <div class="brand-row">
+          <div class="brand-mark">K</div>
+          <div>
+            <div class="eyebrow">Professional dashboard</div>
+            <h1>Kaizen</h1>
+          </div>
+        </div>
+
+        <p class="lead">
+          Connect multiple Discord accounts from one polished control panel built for speed and clarity.
+        </p>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-label">Ready</span>
+            <strong id="readyCount">0</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Connected</span>
+            <strong id="totalCount">0</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Status</span>
+            <strong id="statusBadge">Idle</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel form-panel reveal">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">Connect accounts</p>
+            <h2>Discord tokens</h2>
+          </div>
+          <span class="pill">Secure session</span>
+        </div>
+
+        <label class="field-label" for="tokenInput">Paste your account tokens</label>
+        <textarea id="tokenInput" placeholder="Paste one Discord token per line or separate them with commas"></textarea>
+
+        <div class="toolbar">
+          <button id="connectBtn" class="primary-btn">Connect</button>
+          <button id="clearBtn" class="ghost-btn" type="button">Clear</button>
+        </div>
+
+        <div id="statusMessage" class="status-message">Ready to connect your accounts.</div>
+      </section>
+
+      <section class="panel list-panel reveal">
+        <div class="panel-header compact">
+          <div>
+            <p class="eyebrow">Live overview</p>
+            <h3>Accounts</h3>
+          </div>
+        </div>
+
+        <div id="accountsGrid" class="accounts-grid"></div>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
